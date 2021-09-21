@@ -289,16 +289,46 @@ export class News extends Component {
     console.log("i am constructor");
     this.state = {
       articles: this.articles,
-      loading: false
+      loading: false,
+      page:1
     };
   }
- async componentDidMount(){
-    let url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874'
-    let data =await fetch(url)
-    let parsedData =await data.json()
-    console.log(parsedData)
-    this.setState ({articles:parsedData.articles})
+  async componentDidMount() {
+    let url =
+      "https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=1&pagesize=6";
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    console.log(parsedData);
+    this.setState({ articles: parsedData.articles, totalResults:parsedData.totalResults });
   }
+  handlePreviousClick = async () => {
+    console.log("Previous");
+    let url =
+     `https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
+      this.state.page - 1}&pagesize=6 `;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    this.setState({
+      page: this.state.page - 1,
+      articles: parsedData.articles,
+    });
+  };
+  handleNextClick = async () => {
+    if(this.state.page + 1 > Math.ceil(this.state.totalResults/6)){
+
+    }
+    else{
+      
+      let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
+        this.state.page + 1}&pagesize=6 `;
+      let data = await fetch(url);
+      let parsedData = await data.json();
+      this.setState({
+        page: this.state.page + 1,
+        articles: parsedData.articles,
+      });
+    }
+  };
   render() {
     return (
       <div className="container my-3">
@@ -308,18 +338,38 @@ export class News extends Component {
             return (
               <div className="col-md-4" key={element.url}>
                 <NewsItem
-                // if show any null error so then like title show null then use any from both of them
-                // ( title={element.title?element.title.slice(0 , 50):""}     )  
-                //                  OR
-                // ( title={!element.title?element.title.slice(0 , 50):""}     )
+                  // if show any null error so then like title show null then use any from both of them
+                  // ( title={element.title?element.title.slice(0 , 50):""}     )
+                  //                  OR
+                  // ( title={!element.title?element.title.slice(0 , 50):""}     )
                   // khuchh bhi kaam kar jayega
-                  title={element.title.slice(0 , 50)}
-                  description={element.description.slice(0,70)}
-                  imageUrl={element.urlToImage} NewsUrl={element.url}
+                  // title={element.title?element.title.slice(0 , 50):""}
+                  title={
+                    element.description ? element.description.slice(0, 70) : ""
+                  }
+                  imageUrl={element.urlToImage}
+                  NewsUrl={element.url}
                 />
               </div>
             );
           })}
+        </div>
+        <div className="container d-flex justify-content-between ">
+          <button
+            disabled={this.state.page<=1}
+            type="button"
+            className="btn btn-dark "
+            onClick={this.handlePreviousClick}
+          >
+            &larr; Previous
+          </button>
+          <button
+            type="button"
+            className="btn btn-dark"
+            onClick={this.handleNextClick}
+          >
+            Next &rarr;
+          </button>
         </div>
       </div>
     );
