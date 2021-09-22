@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import NewsItem from "./NewsItem";
+import Spinner from "./Spinner";
+
 
 export class News extends Component {
   articles = [
@@ -290,51 +292,64 @@ export class News extends Component {
     this.state = {
       articles: this.articles,
       loading: false,
-      page:1
+      page: 1,
     };
   }
   async componentDidMount() {
     let url =
-      "https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=1&pagesize=6";
+      `https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=1&pagesize=${this.props.pageSize}`;
+      // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
+      this.setState({loading:true})
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
-    this.setState({ articles: parsedData.articles, totalResults:parsedData.totalResults });
+    this.setState({
+      articles: parsedData.articles,
+      totalResults: parsedData.totalResults,
+      loading: false //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
+    });
   }
   handlePreviousClick = async () => {
     console.log("Previous");
-    let url =
-     `https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
-      this.state.page - 1}&pagesize=6 `;
-    let data = await fetch(url);
+    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
+      this.state.page - 1}&pagesize=${this.props.pageSize} `;
+      // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
+      this.setState({loading:true})
+
+      let data = await fetch(url);
     let parsedData = await data.json();
     this.setState({
       page: this.state.page - 1,
       articles: parsedData.articles,
+      loading: false //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
     });
   };
   handleNextClick = async () => {
-    if(this.state.page + 1 > Math.ceil(this.state.totalResults/6)){
-
-    }
-    else{
-      
+    // this.state.page + 1 means jis no. k page par hum jane wale hai means next page (means 1st page or 2nd page etc...) agar uska no. Math.ceil(this.state.totalResults/6) ke page no. se bada hua to khuch nhi dikhayega {if condition run} . varna next page ke no. k chhote hone tak else ka content ko dikhayega (because totalResults/6 = no. of page that are limited toh next page ka no. chota rahega means page is availble and showing else condition )agar next page ka no. totalResults/6 ke limited pages se bada hoga means content is not availble so the here if condition is run which has nothing
+    if (!(this.state.page + 1 > Math.ceil(this.state.totalResults /this.props.pageSize))) {
+   
       let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
-        this.state.page + 1}&pagesize=6 `;
+        this.state.page + 1}&pagesize=${this.props.pageSize} `;
+        // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
+      this.setState({loading:true})
       let data = await fetch(url);
       let parsedData = await data.json();
       this.setState({
         page: this.state.page + 1,
         articles: parsedData.articles,
+        loading: false //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
       });
     }
   };
   render() {
     return (
       <div className="container my-3">
-        <h2>NewsMonkey - Top Headlines</h2>
+        <h2 className="text-center">NewsMonkey - Top Headlines</h2>
+        {/*  {this.state.loading && <Spinner />} isliye kiya varna loading showing every time (this.state.loading agar true hoga tabi loading dikhana varna nhi. but true or false how to decide . true or false is decide ki where it to true or false . by the upper ke code se like jab url just hit then the loading is true and when data is come then loading is false) */}
+       {this.state.loading && <Spinner />}
         <div className="row my-3">
-          {this.state.articles.map((element) => {
+          {/* !this.state.loading && means jaha loading nhi chalegi to content dikhana varna loading chal gayi to don't show content (loading is true means Spinner is showing) */}
+          {!this.state.loading && this.state.articles.map((element) => {
             return (
               <div className="col-md-4" key={element.url}>
                 <NewsItem
@@ -356,14 +371,14 @@ export class News extends Component {
         </div>
         <div className="container d-flex justify-content-between ">
           <button
-            disabled={this.state.page<=1}
+            disabled={this.state.page <= 1}
             type="button"
             className="btn btn-dark "
             onClick={this.handlePreviousClick}
           >
             &larr; Previous
           </button>
-          <button
+          <button disabled={this.state.page + 1 > Math.ceil(this.state.totalResults/this.props.pageSize)}
             type="button"
             className="btn btn-dark"
             onClick={this.handleNextClick}

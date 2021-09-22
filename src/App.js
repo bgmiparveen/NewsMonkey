@@ -5,14 +5,13 @@ import './App.css';
 import NavBar from './Components/NavBar';
 import News from './Components/News';
     
-    export default class App extends Component {
+export default class App extends Component {
   
-      render()
-       {
-        return (
-          <>
+  render()
+   {
+    return (     <>
          <NavBar/>
-         <News/>
+         <News pageSize={6} />
        </>
         )
       }
