@@ -299,14 +299,14 @@ export class News extends Component {
     let url =
       `https://newsapi.org/v2/top-headlines?country=in&apiKey=5c2a632111aa4f738fdf21c08539e874&page=1&pagesize=${this.props.pageSize}`;
       // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
-      this.setState({loading:true})
+     
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
     this.setState({
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
-      loading: false //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
+     //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
     });
   }
   handlePreviousClick = async () => {
