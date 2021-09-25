@@ -303,10 +303,12 @@ export class News extends Component {
       articles: this.articles,
       loading: false,
       page: 1,
+      
     };
   }
-  async componentDidMount() {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=5c2a632111aa4f738fdf21c08539e874&page=1&pagesize=${this.props.pageSize}`;
+  // only page is changes so we put it in updatedNews function next click karne se page + 1 bej dega this.state.page ko and the the this.updatedNews() is showing 
+   updatedNews= async ()=>{
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${this.state.page}&pagesize=${this.props.pageSize}`;
     // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
     this.setState({ loading: true });
     let data = await fetch(url);
@@ -317,52 +319,70 @@ export class News extends Component {
       totalResults: parsedData.totalResults,
       loading: false, //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
     });
+   }
+  async componentDidMount() {
+    // let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=5c2a632111aa4f738fdf21c08539e874&page=1&pagesize=${this.props.pageSize}`;
+    // // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
+    // this.setState({ loading: true });
+    // let data = await fetch(url);
+    // let parsedData = await data.json();
+    // console.log(parsedData);
+    // this.setState({
+    //   articles: parsedData.articles,
+    //   totalResults: parsedData.totalResults,
+    //   loading: false, //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
+    // });
+    this.updatedNews()
   }
   handlePreviousClick = async () => {
-    console.log("Previous");
-    let url = `https://newsapi.org/v2/top-headlines?country=${
-      this.props.country
-    }&category=${
-      this.props.category
-    }&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
-      this.state.page - 1
-    }&pagesize=${this.props.pageSize} `;
-    // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
-    this.setState({ loading: true });
+    // console.log("Previous");
+    // let url = `https://newsapi.org/v2/top-headlines?country=${
+    //   this.props.country
+    // }&category=${
+    //   this.props.category
+    // }&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
+    //   this.state.page - 1
+    // }&pagesize=${this.props.pageSize} `;
+    // // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
+    // this.setState({ loading: true });
 
-    let data = await fetch(url);
-    let parsedData = await data.json();
+    // let data = await fetch(url);
+    // let parsedData = await data.json();
+    // this.setState({
+    //   page: this.state.page - 1,
+    //   articles: parsedData.articles,
+    //   loading: false, //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
+    // });
     this.setState({
-      page: this.state.page - 1,
-      articles: parsedData.articles,
-      loading: false, //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
-    });
+      page: this.state.page =1
+    })
+    this.updatedNews();
+
   };
   handleNextClick = async () => {
     // this.state.page + 1 means jis no. k page par hum jane wale hai means next page (means 1st page or 2nd page etc...) agar uska no. Math.ceil(this.state.totalResults/6) ke page no. se bada hua to khuch nhi dikhayega {if condition run} . varna next page ke no. k chhote hone tak else ka content ko dikhayega (because totalResults/6 = no. of page that are limited toh next page ka no. chota rahega means page is availble and showing else condition )agar next page ka no. totalResults/6 ke limited pages se bada hoga means content is not availble so the here if condition is run which has nothing
-    if (
-      !(
-        this.state.page + 1 >
-        Math.ceil(this.state.totalResults / this.props.pageSize)
-      )
-    ) {
-      let url = `https://newsapi.org/v2/top-headlines?country=${
-        this.props.country
-      }&category=${
-        this.props.category
-      }&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
-        this.state.page + 1
-      }&pagesize=${this.props.pageSize} `;
-      // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
-      this.setState({ loading: true });
-      let data = await fetch(url);
-      let parsedData = await data.json();
-      this.setState({
-        page: this.state.page + 1,
-        articles: parsedData.articles,
-        loading: false, //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
-      });
-    }
+    // if (
+    //   !(
+    //     this.state.page + 1 >
+    //     Math.ceil(this.state.totalResults / this.props.pageSize)
+    //   )
+    // ) {
+    //   let url = `https://newsapi.org/v2/top-headlines?country=${
+    //     this.props.country
+    //   }&category=${
+    //     this.props.category
+    //   }&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${
+    //     this.state.page + 1
+    //   }&pagesize=${this.props.pageSize} `;
+    //   // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
+    //   this.setState({ loading: true });
+    //   let data = await fetch(url);
+    //   let parsedData = await data.json();
+    //   this.setState({
+    //     page: this.state.page + 1,
+    //  
+    this.setState({page:this.state.page + 1})
+    this.updatedNews()
   };
   render() {
     return (
