@@ -301,7 +301,7 @@ export class News extends Component {
     super();
     console.log("i am constructor");
     this.state = {
-      articles: this.articles,
+      articles: [],
       loading: true,
       page: 1,
       totalResults: this.totalResults,
@@ -309,17 +309,29 @@ export class News extends Component {
   }
   // only page is changes so we put it in updatedNews function next click karne se page + 1 bej dega this.state.page ko and the the this.updatedNews() is showing
   updatedNews = async () => {
+    this.props.setProgress(10);
     let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=5c2a632111aa4f738fdf21c08539e874&page=${this.state.page}&pagesize=${this.props.pageSize}`;
     // line by line code execute hota hai isliye url k just nich loading true kiya hai setstate loading:true hogi jab url hit hoga (abi data nhi aya only url hit still now so loading showing)
+    this.props.setProgress(30);
+
     this.setState({ loading: true });
+    
     let data = await fetch(url);
+    this.props.setProgress(50);
+
     let parsedData = await data.json();
+    this.props.setProgress(60);
+
     console.log(parsedData);
+    this.props.setProgress(70);
+
     this.setState({
       articles: parsedData.articles,
       totalResults: parsedData.totalResults,
       loading: false, //setstate loading:false hogi jab jab data fetch ho kar aa jayega (loading not showing)
     });
+    this.props.setProgress(100);
+
   };
   fetchMoreData = async () => {
     this.setState({ page: this.state.page + 1 });
