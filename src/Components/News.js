@@ -34,10 +34,12 @@ const News = (props) => {
   };
   useEffect(() => {
     updatedNews();
-  }, []);
-
+   
+    
+  }, [])
+ 
   const fetchMoreData = async () => {
-    setPage(page + 1);
+    setPage(page+1)
     let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pagesize=${props.pageSize}`;
 
     setLoading(true);
@@ -45,17 +47,17 @@ const News = (props) => {
     let data = await fetch(url);
     let parsedData = await data.json();
     console.log(parsedData);
-    setArticles(articles.concat(parsedData.articles));
-    setTotalResults(parsedData.totalResults);
-    setLoading(false);
+setArticles(articles.concat(parsedData.articles));
+setTotalResults(parsedData.totalResults);
+setLoading(false)
+    
   };
 
   {
     return (
-      <div className="container my-3">
+      <>
         <h2 className="text-center">NewsMonkey - Top Headlines</h2>
 
-        <div className="row my-3">
           <InfiniteScroll
             dataLength={articles.length}
             next={fetchMoreData}
@@ -86,8 +88,8 @@ const News = (props) => {
               </div>{" "}
             </div>
           </InfiniteScroll>
-        </div>
-      </div>
+    
+      </>
     );
   }
 };
